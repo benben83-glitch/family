@@ -5,6 +5,7 @@ import { useRef, useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { compressImage } from "@/lib/media/compress-image";
 import { safeStorageFilename } from "@/lib/media/safe-filename";
+import { Lightbox } from "@/components/lightbox";
 import { fillSlot, clearSlot } from "../actions";
 import type { SlotWithImage } from "@/lib/albums/data";
 
@@ -12,7 +13,10 @@ export function AlbumGrid({ albumSlug, slots, isParent }: { albumSlug: string; s
   const [confirmClearId, setConfirmClearId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  const filledSlots = slots.filter((slot): slot is SlotWithImage & { signedImageUrl: string } => Boolean(slot.signedImageUrl));
 
   function handleFill(slot: SlotWithImage, file: File) {
     setError(null);
@@ -45,7 +49,14 @@ export function AlbumGrid({ albumSlug, slots, isParent }: { albumSlug: string; s
           <div key={slot.id} className="relative aspect-[3/4] rounded-xl overflow-hidden border-2 border-dashed border-border bg-card/50">
             {slot.signedImageUrl ? (
               <>
-                <Image src={slot.signedImageUrl} alt={slot.label ?? `Sticker ${slot.slot_number}`} fill className="object-cover" unoptimized />
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex(filledSlots.findIndex((s) => s.id === slot.id))}
+                  className="w-full h-full block cursor-zoom-in"
+                  aria-label={`Agrandir le sticker ${slot.label ?? slot.slot_number}`}
+                >
+                  <Image src={slot.signedImageUrl} alt={slot.label ?? `Sticker ${slot.slot_number}`} fill className="object-cover" unoptimized />
+                </button>
                 {isParent &&
                   (confirmClearId === slot.id ? (
                     <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center gap-2 p-2">
@@ -103,6 +114,15 @@ export function AlbumGrid({ albumSlug, slots, isParent }: { albumSlug: string; s
       </div>
 
       {error && <p className="text-sm text-red-700">{error}</p>}
+
+      {lightboxIndex !== null && (
+        <Lightbox
+          items={filledSlots.map((slot) => ({ id: slot.id, signedUrl: slot.signedImageUrl, caption: slot.label }))}
+          index={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onNavigate={setLightboxIndex}
+        />
+      )}
     </div>
   );
 }

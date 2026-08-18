@@ -81,3 +81,25 @@ export async function clearSlot(params: { slotId: string; albumSlug: string; sto
   revalidatePath("/explorateurs/album");
   return { error: null };
 }
+
+export async function deleteAlbum(albumId: string): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+
+  const [{ data: album }, { data: slots }] = await Promise.all([
+    supabase.from("sticker_albums").select("background_image").eq("id", albumId).maybeSingle(),
+    supabase.from("sticker_slots").select("image").eq("album_id", albumId),
+  ]);
+
+  const paths = [album?.background_image?.storage_path, ...(slots ?? []).map((slot) => slot.image?.storage_path)].filter(
+    (path): path is string => Boolean(path)
+  );
+  if (paths.length > 0) {
+    await supabase.storage.from("sticker-albums").remove(paths);
+  }
+
+  const { error } = await supabase.from("sticker_albums").delete().eq("id", albumId);
+  if (error) return { error: error.message };
+
+  revalidatePath("/explorateurs/album");
+  redirect("/explorateurs/album");
+}

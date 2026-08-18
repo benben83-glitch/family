@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getAlbumBySlug, listAlbumSlots } from "@/lib/albums/data";
 import { requireFamilyProfile } from "@/lib/auth/session";
 import { AlbumGrid } from "./album-grid";
+import { DeleteAlbumButton } from "./delete-album-button";
 
 export default async function AlbumPage({ params }: PageProps<"/explorateurs/album/[slug]">) {
   const { slug } = await params;
@@ -28,6 +29,12 @@ export default async function AlbumPage({ params }: PageProps<"/explorateurs/alb
       </div>
 
       <AlbumGrid albumSlug={album.slug} slots={slots} isParent={isParent} />
+
+      {isParent && (
+        <div className="pt-4 border-t border-border">
+          <DeleteAlbumButton albumId={album.id} />
+        </div>
+      )}
     </div>
   );
 }
