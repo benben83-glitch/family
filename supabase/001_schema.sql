@@ -91,11 +91,15 @@ create policy "profiles_update_own_or_parent" on public.profiles
   using (id = auth.uid() or public.is_parent())
   with check (id = auth.uid() or public.is_parent());
 
--- Empêche un compte 'adulte' de s'auto-promouvoir 'parent'.
+-- Empêche un compte 'adulte' de s'auto-promouvoir 'parent' DEPUIS L'APPLI
+-- (auth.uid() renseigné = requête PostgREST avec le JWT de l'utilisateur).
+-- Une modification faite depuis le SQL Editor ou service_role (auth.uid()
+-- null, pas de session utilisateur) n'est pas concernée : c'est le seul
+-- moyen de nommer le tout premier parent après l'exécution de ce schéma.
 create or replace function public.prevent_role_self_escalation()
 returns trigger language plpgsql as $$
 begin
-  if new.role <> old.role and not public.is_parent() then
+  if new.role <> old.role and auth.uid() is not null and not public.is_parent() then
     raise exception 'Seul un parent peut changer un rôle.';
   end if;
   return new;
