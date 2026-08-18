@@ -133,29 +133,36 @@ export function WorldMap({ trips }: { trips: Trip[] }) {
             ⟲
           </button>
         </div>
+
+        {selected && (
+          <div className="absolute top-3 left-3 right-3 sm:right-auto sm:max-w-sm bg-card/95 backdrop-blur border border-border rounded-xl p-3 shadow-lg flex gap-3 items-center">
+            <div className="relative w-14 h-14 rounded-lg overflow-hidden bg-primary/10 shrink-0">
+              {selected.cover_image?.url ? (
+                <Image src={selected.cover_image.url} alt={selected.title} fill className="object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-xl">🗺️</div>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs uppercase tracking-wide text-muted truncate">{selected.city ? `${selected.city}, ${selected.country}` : selected.country}</p>
+              <p className="font-display text-base text-primary truncate">{selected.title}</p>
+              <Link href={`/voyages/${selected.slug}`} className="text-sm text-accent hover:underline">
+                Voir le voyage →
+              </Link>
+            </div>
+            <button
+              type="button"
+              onClick={() => setSelected(null)}
+              aria-label="Fermer"
+              className="shrink-0 w-6 h-6 rounded-full text-muted hover:bg-primary/10 hover:text-foreground transition-colors flex items-center justify-center"
+            >
+              ×
+            </button>
+          </div>
+        )}
       </div>
 
-      {selected ? (
-        <div className="bg-card border border-border rounded-xl p-4 flex gap-4 items-center">
-          <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-primary/10 shrink-0">
-            {selected.cover_image?.url ? (
-              <Image src={selected.cover_image.url} alt={selected.title} fill className="object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-2xl">🗺️</div>
-            )}
-          </div>
-          <div className="flex-1">
-            <p className="text-xs uppercase tracking-wide text-muted">{selected.city ? `${selected.city}, ${selected.country}` : selected.country}</p>
-            <p className="font-display text-lg text-primary">{selected.title}</p>
-            {selected.summary && <p className="text-sm text-foreground/80 mt-1 line-clamp-2">{selected.summary}</p>}
-          </div>
-          <Link href={`/voyages/${selected.slug}`} className="shrink-0 rounded-full bg-primary text-primary-foreground text-sm px-4 py-2 hover:opacity-90 transition-opacity">
-            Voir le voyage
-          </Link>
-        </div>
-      ) : (
-        <p className="text-muted text-sm text-center">Sélectionnez un repère 📍 pour découvrir le voyage associé.</p>
-      )}
+      {!selected && <p className="text-muted text-sm text-center">Sélectionnez un repère 📍 pour découvrir le voyage associé.</p>}
     </div>
   );
 }
