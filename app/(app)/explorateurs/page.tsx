@@ -8,6 +8,7 @@ import { AddChildForm } from "./add-child-form";
 
 const ACTIVITIES = [
   { emoji: "🃏", title: "Mes cartes", href: "/explorateurs/cartes", available: true },
+  { emoji: "📖", title: "Mon album", href: "/explorateurs/album", available: true },
   { emoji: "🎨", title: "Je dessine", href: null, available: false },
   { emoji: "🧠", title: "Quiz", href: "/explorateurs/quiz", available: true },
   { emoji: "🎮", title: "Jeux", href: null, available: false },
