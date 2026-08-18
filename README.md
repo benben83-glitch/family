@@ -11,7 +11,7 @@ Application privée pour conserver et partager les souvenirs de voyage de la fam
 ## Mise en route
 
 1. Créer un projet sur [supabase.com](https://supabase.com).
-2. Dans **SQL Editor**, exécuter `supabase/001_schema.sql` puis `supabase/002_kids_universe.sql` (dans cet ordre), tels quels.
+2. Dans **SQL Editor**, exécuter dans l'ordre `supabase/001_schema.sql`, `supabase/002_kids_universe.sql` puis `supabase/003_sticker_albums.sql`, tels quels.
 3. Dans **Authentication → Add user**, créer le premier compte avec `user_metadata` :
    ```json
    { "role": "parent", "full_name": "Prénom Nom" }
@@ -30,9 +30,11 @@ Fait :
 - Carte du monde interactive (vrais contours des continents, zoom/déplacement, pays colorés) avec les voyages positionnés dessus.
 - Suppression de photos/vidéos (avec confirmation) et agrandissement plein écran.
 - Univers enfants (v1) : « Club des Explorateurs », sélecteur de profil enfant (sans compte séparé, mémorisé localement), catalogue de cartes animaux avec rareté, cartes verrouillées/débloquées selon les voyages, page détail par carte, gestion des cartes par les parents.
+- Quiz généré automatiquement à partir des voyages, animaux découverts et pays visités.
+- Album de stickers façon Panini : albums à thème (décor + emplacements vides) remplis manuellement par la famille avec ses propres images.
 
 Pas encore fait (prochaines itérations, voir cahier des charges) :
-- Quiz, atelier dessin, memory, missions, badges/trophées (univers enfants, suite).
+- Atelier dessin, memory, missions, badges/trophées (univers enfants, suite).
 - Suivi individuel par enfant (actuellement la collection de cartes est partagée au niveau de la famille, pas par enfant — pas de compte séparé pour les enfants).
 - Édition des voyages et journées, favoris, organisation des photos par lieu/personne/activité.
 - PWA / application mobile.
