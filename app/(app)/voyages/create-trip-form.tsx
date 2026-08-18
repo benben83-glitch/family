@@ -1,12 +1,18 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, type FormEvent } from "react";
 import { createTrip } from "./actions";
 import { initialFormState } from "@/lib/forms/action-state";
+import { LocationSearch } from "./location-search";
+import type { GeocodeResult } from "@/app/api/geocode/route";
 
 export function CreateTripForm() {
   const [open, setOpen] = useState(false);
   const [state, formAction] = useActionState(createTrip, initialFormState);
+  const [location, setLocation] = useState<GeocodeResult | null>(null);
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
+  const [locationError, setLocationError] = useState(false);
 
   if (!open) {
     return (
@@ -20,20 +26,63 @@ export function CreateTripForm() {
     );
   }
 
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    if (!location) {
+      e.preventDefault();
+      setLocationError(true);
+    }
+  }
+
   return (
-    <form action={formAction} className="bg-card border border-border rounded-xl p-5 flex flex-col gap-3 w-full">
+    <form action={formAction} onSubmit={handleSubmit} className="bg-card border border-border rounded-xl p-5 flex flex-col gap-3 w-full">
       <p className="font-display text-lg text-primary">Nouveau voyage</p>
 
       <div className="grid sm:grid-cols-2 gap-3">
         <Field label="Titre" name="title" placeholder="Safari en Tanzanie" required />
-        <Field label="Pays" name="country" placeholder="Tanzanie" required />
-        <Field label="Ville / région (optionnel)" name="city" placeholder="Serengeti" />
         <div />
+
+        <LocationSearch
+          onSelect={(result) => {
+            setLocation(result);
+            setCountry(result.country);
+            setCity(result.city);
+            setLocationError(false);
+          }}
+        />
+        {locationError && <p className="sm:col-span-2 text-sm text-red-700">Sélectionne un lieu dans la liste de résultats.</p>}
+
+        <div className="flex flex-col gap-1">
+          <label htmlFor="country" className="text-xs text-muted">
+            Pays
+          </label>
+          <input
+            id="country"
+            name="country"
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            required
+            className="bg-background border border-border rounded-lg px-3 py-2 text-sm"
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="city" className="text-xs text-muted">
+            Ville / région (optionnel)
+          </label>
+          <input
+            id="city"
+            name="city"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="bg-background border border-border rounded-lg px-3 py-2 text-sm"
+          />
+        </div>
+
         <Field label="Date de début" name="start_date" type="date" required />
         <Field label="Date de fin (optionnel)" name="end_date" type="date" />
-        <Field label="Latitude" name="latitude" type="number" step="any" placeholder="-2.15" required />
-        <Field label="Longitude" name="longitude" type="number" step="any" placeholder="34.68" required />
       </div>
+
+      <input type="hidden" name="latitude" value={location?.latitude ?? ""} />
+      <input type="hidden" name="longitude" value={location?.longitude ?? ""} />
 
       <div className="flex flex-col gap-1">
         <label htmlFor="summary" className="text-xs text-muted">
@@ -62,14 +111,12 @@ function Field({
   type = "text",
   placeholder,
   required,
-  step,
 }: {
   label: string;
   name: string;
   type?: string;
   placeholder?: string;
   required?: boolean;
-  step?: string;
 }) {
   return (
     <div className="flex flex-col gap-1">
@@ -80,7 +127,6 @@ function Field({
         id={name}
         name={name}
         type={type}
-        step={step}
         placeholder={placeholder}
         required={required}
         className="bg-background border border-border rounded-lg px-3 py-2 text-sm"
