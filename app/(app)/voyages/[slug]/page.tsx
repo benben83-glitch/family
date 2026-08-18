@@ -102,7 +102,7 @@ function MediaGrid({ items, compact = false }: { items: { id: string; signedUrl:
             {item.type === "video" ? (
               <video src={item.signedUrl} className="w-full h-full object-cover" controls />
             ) : (
-              <Image src={item.signedUrl} alt={item.caption ?? ""} fill className="object-cover" />
+              <Image src={item.signedUrl} alt={item.caption ?? ""} fill sizes="(min-width: 768px) 25vw, 50vw" className="object-cover" unoptimized />
             )}
           </div>
         ) : null

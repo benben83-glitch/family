@@ -57,7 +57,14 @@ export default async function HomePage() {
                   {item.type === "video" ? (
                     <video src={item.signedUrl} className="w-full h-full object-cover" muted />
                   ) : (
-                    <Image src={item.signedUrl} alt={item.caption ?? item.tripTitle} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <Image
+                      src={item.signedUrl}
+                      alt={item.caption ?? item.tripTitle}
+                      fill
+                      sizes="(min-width: 640px) 25vw, 50vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      unoptimized
+                    />
                   )}
                 </Link>
               ) : null
