@@ -2,9 +2,11 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getTripBySlug, listTripDays, listTripMedia } from "@/lib/trips/data";
 import { requireFamilyProfile } from "@/lib/auth/session";
+import { listAnimalCardsWithCollectionStatus, getTripAnimalCardIds } from "@/lib/animals/data";
 import { AddDayForm } from "./add-day-form";
 import { PhotoUploader } from "./photo-uploader";
 import { MediaGrid } from "./media-grid";
+import { AnimalCardsSection } from "./animal-cards-section";
 
 function formatDateRange(start: string, end: string | null) {
   const fmt = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" });
@@ -18,7 +20,12 @@ export default async function TripPage({ params }: PageProps<"/voyages/[slug]">)
   const [trip, profile] = await Promise.all([getTripBySlug(slug), requireFamilyProfile()]);
   if (!trip) notFound();
 
-  const [days, media] = await Promise.all([listTripDays(trip.id), listTripMedia(trip.id)]);
+  const [days, media, allCards, linkedCardIds] = await Promise.all([
+    listTripDays(trip.id),
+    listTripMedia(trip.id),
+    listAnimalCardsWithCollectionStatus(),
+    getTripAnimalCardIds(trip.id),
+  ]);
   const isParent = profile.role === "parent";
   const mediaByDay = new Map<string | null, typeof media>();
   for (const item of media) {
@@ -26,6 +33,8 @@ export default async function TripPage({ params }: PageProps<"/voyages/[slug]">)
     mediaByDay.set(key, [...(mediaByDay.get(key) ?? []), item]);
   }
   const unassignedMedia = mediaByDay.get(null) ?? [];
+  const linkedCards = allCards.filter((card) => linkedCardIds.has(card.id));
+  const availableCards = allCards.filter((card) => !linkedCardIds.has(card.id));
 
   return (
     <div className="flex flex-col gap-10">
@@ -60,6 +69,8 @@ export default async function TripPage({ params }: PageProps<"/voyages/[slug]">)
           <MediaGrid items={unassignedMedia.length > 0 ? unassignedMedia : media} isParent={isParent} tripSlug={trip.slug} />
         )}
       </section>
+
+      <AnimalCardsSection tripId={trip.id} tripSlug={trip.slug} linkedCards={linkedCards} availableCards={availableCards} isParent={isParent} />
 
       <section className="flex flex-col gap-4">
         <h2 className="font-display text-2xl text-primary">Journal de voyage</h2>

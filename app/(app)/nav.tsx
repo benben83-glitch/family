@@ -9,6 +9,7 @@ const LINKS = [
   { href: "/", label: "Accueil" },
   { href: "/voyages", label: "Nos voyages" },
   { href: "/carte", label: "Carte du monde" },
+  { href: "/explorateurs", label: "Explorateurs" },
 ];
 
 export function Nav({ profile }: { profile: FamilyProfile }) {

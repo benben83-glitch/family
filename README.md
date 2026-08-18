@@ -11,7 +11,7 @@ Application privée pour conserver et partager les souvenirs de voyage de la fam
 ## Mise en route
 
 1. Créer un projet sur [supabase.com](https://supabase.com).
-2. Dans **SQL Editor**, exécuter `supabase/001_schema.sql` tel quel.
+2. Dans **SQL Editor**, exécuter `supabase/001_schema.sql` puis `supabase/002_kids_universe.sql` (dans cet ordre), tels quels.
 3. Dans **Authentication → Add user**, créer le premier compte avec `user_metadata` :
    ```json
    { "role": "parent", "full_name": "Prénom Nom" }
@@ -27,10 +27,12 @@ Fait :
 - Profils famille (`profiles`, rôles parent/adulte) + profils enfants (`child_profiles`, sans compte séparé pour l'instant).
 - Accueil avec entrées visuelles et derniers souvenirs.
 - Nos voyages : liste, création (parents), page détail avec couverture, résumé, upload photos/vidéos et journal jour par jour.
-- Carte du monde basique (positionnement par latitude/longitude, sans fond de carte illustré).
+- Carte du monde interactive (vrais contours des continents, zoom/déplacement, pays colorés) avec les voyages positionnés dessus.
+- Suppression de photos/vidéos (avec confirmation) et agrandissement plein écran.
+- Univers enfants (v1) : « Club des Explorateurs », sélecteur de profil enfant (sans compte séparé, mémorisé localement), catalogue de cartes animaux avec rareté, cartes verrouillées/débloquées selon les voyages, page détail par carte, gestion des cartes par les parents.
 
 Pas encore fait (prochaines itérations, voir cahier des charges) :
-- Univers enfants : cartes à collectionner, quiz, atelier dessin, memory, missions, badges.
-- Sélecteur de profil enfant côté interface (actuellement uniquement des comptes parent/adulte).
-- Édition/suppression des voyages et médias, favoris, organisation par lieu/personne/activité.
+- Quiz, atelier dessin, memory, missions, badges/trophées (univers enfants, suite).
+- Suivi individuel par enfant (actuellement la collection de cartes est partagée au niveau de la famille, pas par enfant — pas de compte séparé pour les enfants).
+- Édition des voyages et journées, favoris, organisation des photos par lieu/personne/activité.
 - PWA / application mobile.

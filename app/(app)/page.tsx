@@ -39,13 +39,16 @@ export default async function HomePage() {
         ))}
       </section>
 
-      <section className="bg-primary/5 border border-primary/15 rounded-2xl p-6 flex items-center gap-4">
+      <Link
+        href="/explorateurs"
+        className="bg-primary/5 border border-primary/15 rounded-2xl p-6 flex items-center gap-4 hover:bg-primary/10 transition-colors"
+      >
         <span className="text-3xl">🌟</span>
         <div>
-          <p className="font-display text-lg text-primary">Le Club des Explorateurs arrive bientôt</p>
-          <p className="text-sm text-muted mt-0.5">Cartes d&apos;animaux, quiz, atelier dessin et badges pour les enfants — prochaine étape du carnet.</p>
+          <p className="font-display text-lg text-primary">Le Club des Explorateurs</p>
+          <p className="text-sm text-muted mt-0.5">Cartes d&apos;animaux liées à nos voyages — quiz, dessin et badges à venir.</p>
         </div>
-      </section>
+      </Link>
 
       {recentMedia.length > 0 && (
         <section className="flex flex-col gap-4">
