@@ -2,57 +2,137 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { geoEquirectangular, geoPath } from "d3-geo";
+import { select } from "d3-selection";
+import { zoom, zoomIdentity, type D3ZoomEvent, type ZoomBehavior } from "d3-zoom";
+import "d3-transition";
 import { feature } from "topojson-client";
 import type { Topology, GeometryCollection } from "topojson-specification";
-import landTopology from "world-atlas/land-110m.json";
+import type { Feature, Geometry } from "geojson";
+import countriesTopology from "world-atlas/countries-110m.json";
 import type { Trip } from "@/lib/trips/types";
 
 const WIDTH = 960;
 const HEIGHT = 500;
+const MIN_ZOOM = 1;
+const MAX_ZOOM = 8;
+
+// Palette d'atlas illustré : chaque pays garde une teinte stable (dérivée de
+// son id numérique) parmi ce jeu de couleurs cohérent avec le reste du site.
+const LAND_COLORS = ["#a9c9a0", "#c9b877", "#8fb8a8", "#c99b7a", "#9fb896", "#b8a97e", "#7fb0a0", "#c2a888"];
 
 export function WorldMap({ trips }: { trips: Trip[] }) {
   const [selected, setSelected] = useState<Trip | null>(null);
+  const [transform, setTransform] = useState(zoomIdentity);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const zoomBehaviorRef = useRef<ZoomBehavior<SVGSVGElement, unknown> | null>(null);
 
-  const { landPath, projectPoint } = useMemo(() => {
-    const topology = landTopology as unknown as Topology<{ land: GeometryCollection }>;
-    const land = feature(topology, topology.objects.land);
-    const projection = geoEquirectangular().fitSize([WIDTH, HEIGHT], land);
+  const { countries, projectPoint } = useMemo(() => {
+    const topology = countriesTopology as unknown as Topology<{ countries: GeometryCollection }>;
+    const collection = feature(topology, topology.objects.countries) as unknown as {
+      features: Feature<Geometry, { name?: string }>[];
+    };
+    const projection = geoEquirectangular().fitSize([WIDTH, HEIGHT], collection as never);
     const path = geoPath(projection);
 
     return {
-      landPath: path(land) ?? "",
+      countries: collection.features.map((f, index) => ({
+        key: f.id != null ? String(f.id) : `country-${index}`,
+        d: path(f) ?? "",
+        color: LAND_COLORS[Number(f.id ?? index) % LAND_COLORS.length],
+      })),
       projectPoint: (longitude: number, latitude: number) => projection([longitude, latitude]),
     };
   }, []);
 
+  useEffect(() => {
+    if (!svgRef.current) return;
+    const svgSelection = select(svgRef.current);
+    const behavior = zoom<SVGSVGElement, unknown>()
+      .scaleExtent([MIN_ZOOM, MAX_ZOOM])
+      .translateExtent([
+        [0, 0],
+        [WIDTH, HEIGHT],
+      ])
+      .on("zoom", (event: D3ZoomEvent<SVGSVGElement, unknown>) => setTransform(event.transform));
+
+    svgSelection.call(behavior);
+    zoomBehaviorRef.current = behavior;
+
+    return () => {
+      svgSelection.on(".zoom", null);
+    };
+  }, []);
+
+  function zoomBy(factor: number) {
+    if (!svgRef.current || !zoomBehaviorRef.current) return;
+    select(svgRef.current).transition().duration(200).call(zoomBehaviorRef.current.scaleBy, factor);
+  }
+
+  function resetZoom() {
+    if (!svgRef.current || !zoomBehaviorRef.current) return;
+    select(svgRef.current).transition().duration(200).call(zoomBehaviorRef.current.transform, zoomIdentity);
+  }
+
   return (
     <div className="flex flex-col gap-5">
-      <div className="relative w-full rounded-2xl overflow-hidden border border-border bg-gradient-to-b from-[#dceee9] to-[#c3ddd6]">
-        <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="w-full h-auto block">
-          <path d={landPath} fill="#c9dfd4" stroke="#1f3d3a" strokeOpacity={0.25} strokeWidth={0.6} />
+      <div className="relative w-full rounded-2xl overflow-hidden border border-border bg-gradient-to-b from-[#bfe0ef] to-[#7fb8d8]">
+        <svg ref={svgRef} viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="w-full h-auto block cursor-grab active:cursor-grabbing touch-none">
+          <g transform={transform.toString()}>
+            {countries.map((country) => (
+              <path key={country.key} d={country.d} fill={country.color} stroke="#f6f1e7" strokeWidth={0.5} />
+            ))}
 
-          {trips.map((trip) => {
-            const point = projectPoint(trip.longitude, trip.latitude);
-            if (!point) return null;
-            const [x, y] = point;
-            const isSelected = selected?.id === trip.id;
+            {trips.map((trip) => {
+              const point = projectPoint(trip.longitude, trip.latitude);
+              if (!point) return null;
+              const [x, y] = point;
+              const isSelected = selected?.id === trip.id;
+              const inverseScale = 1 / transform.k;
 
-            return (
-              <g
-                key={trip.id}
-                transform={`translate(${x}, ${y})`}
-                onClick={() => setSelected(trip)}
-                className="cursor-pointer"
-                role="button"
-                aria-label={trip.title}
-              >
-                <circle r={isSelected ? 9 : 7} className="fill-accent transition-all" stroke="#fff" strokeWidth={1.5} />
-              </g>
-            );
-          })}
+              return (
+                <g
+                  key={trip.id}
+                  transform={`translate(${x}, ${y}) scale(${inverseScale})`}
+                  onClick={() => setSelected(trip)}
+                  className="cursor-pointer"
+                  role="button"
+                  aria-label={trip.title}
+                >
+                  <circle r={isSelected ? 9 : 7} className="fill-accent transition-all" stroke="#fff" strokeWidth={1.5} />
+                </g>
+              );
+            })}
+          </g>
         </svg>
+
+        <div className="absolute bottom-3 right-3 flex flex-col gap-1.5">
+          <button
+            type="button"
+            onClick={() => zoomBy(1.5)}
+            aria-label="Zoomer"
+            className="w-8 h-8 rounded-full bg-card border border-border text-primary text-lg leading-none flex items-center justify-center hover:bg-primary/10 transition-colors"
+          >
+            +
+          </button>
+          <button
+            type="button"
+            onClick={() => zoomBy(1 / 1.5)}
+            aria-label="Dézoomer"
+            className="w-8 h-8 rounded-full bg-card border border-border text-primary text-lg leading-none flex items-center justify-center hover:bg-primary/10 transition-colors"
+          >
+            −
+          </button>
+          <button
+            type="button"
+            onClick={resetZoom}
+            aria-label="Réinitialiser la vue"
+            className="w-8 h-8 rounded-full bg-card border border-border text-primary text-xs leading-none flex items-center justify-center hover:bg-primary/10 transition-colors"
+          >
+            ⟲
+          </button>
+        </div>
       </div>
 
       {selected ? (
