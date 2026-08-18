@@ -77,6 +77,12 @@ export function QuizPlayer({ data }: { data: QuizData }) {
         </span>
       </div>
 
+      {questions.length < QUESTIONS_PER_QUIZ && index === 0 && (
+        <p className="text-xs text-muted text-center -mt-3">
+          Ajoutez d&apos;autres voyages et cartes animaux découvertes pour débloquer plus de questions.
+        </p>
+      )}
+
       <p className="font-display text-xl text-primary whitespace-pre-line text-center">{current.prompt}</p>
 
       <div className="grid gap-2.5">
