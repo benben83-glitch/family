@@ -61,3 +61,16 @@ export async function addMedia(params: {
   revalidatePath(`/voyages/${params.tripSlug}`);
   return { error: null };
 }
+
+export async function deleteMedia(params: { mediaId: string; tripSlug: string; storagePath: string }): Promise<{ error: string | null }> {
+  const supabase = await createClient();
+
+  const { error: storageError } = await supabase.storage.from("trip-media").remove([params.storagePath]);
+  if (storageError) return { error: storageError.message };
+
+  const { error: dbError } = await supabase.from("media").delete().eq("id", params.mediaId);
+  if (dbError) return { error: dbError.message };
+
+  revalidatePath(`/voyages/${params.tripSlug}`);
+  return { error: null };
+}

@@ -4,6 +4,7 @@ import { getTripBySlug, listTripDays, listTripMedia } from "@/lib/trips/data";
 import { requireFamilyProfile } from "@/lib/auth/session";
 import { AddDayForm } from "./add-day-form";
 import { PhotoUploader } from "./photo-uploader";
+import { MediaGrid } from "./media-grid";
 
 function formatDateRange(start: string, end: string | null) {
   const fmt = new Intl.DateTimeFormat("fr-FR", { day: "numeric", month: "long", year: "numeric" });
@@ -56,7 +57,7 @@ export default async function TripPage({ params }: PageProps<"/voyages/[slug]">)
         {media.length === 0 ? (
           <p className="text-muted text-sm">Aucun souvenir ajouté pour ce voyage pour le moment.</p>
         ) : (
-          <MediaGrid items={unassignedMedia.length > 0 ? unassignedMedia : media} />
+          <MediaGrid items={unassignedMedia.length > 0 ? unassignedMedia : media} isParent={isParent} tripSlug={trip.slug} />
         )}
       </section>
 
@@ -78,7 +79,7 @@ export default async function TripPage({ params }: PageProps<"/voyages/[slug]">)
                   {day.description && <p className="text-sm text-foreground/80 mt-2">{day.description}</p>}
                   {dayMedia.length > 0 && (
                     <div className="mt-3">
-                      <MediaGrid items={dayMedia} compact />
+                      <MediaGrid items={dayMedia} isParent={isParent} tripSlug={trip.slug} compact />
                     </div>
                   )}
                 </li>
@@ -89,24 +90,6 @@ export default async function TripPage({ params }: PageProps<"/voyages/[slug]">)
 
         {isParent && <AddDayForm tripId={trip.id} tripSlug={trip.slug} nextDayNumber={days.length + 1} />}
       </section>
-    </div>
-  );
-}
-
-function MediaGrid({ items, compact = false }: { items: { id: string; signedUrl: string | null; type: string; caption: string | null }[]; compact?: boolean }) {
-  return (
-    <div className={`grid gap-2 ${compact ? "grid-cols-3 sm:grid-cols-4" : "grid-cols-2 sm:grid-cols-3 md:grid-cols-4"}`}>
-      {items.map((item) =>
-        item.signedUrl ? (
-          <div key={item.id} className="relative aspect-square rounded-lg overflow-hidden bg-primary/10">
-            {item.type === "video" ? (
-              <video src={item.signedUrl} className="w-full h-full object-cover" controls />
-            ) : (
-              <Image src={item.signedUrl} alt={item.caption ?? ""} fill sizes="(min-width: 768px) 25vw, 50vw" className="object-cover" unoptimized />
-            )}
-          </div>
-        ) : null
-      )}
     </div>
   );
 }
