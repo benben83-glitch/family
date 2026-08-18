@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useRef, useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { compressImage } from "@/lib/media/compress-image";
+import { safeStorageFilename } from "@/lib/media/safe-filename";
 import { fillSlot, clearSlot } from "../actions";
 import type { SlotWithImage } from "@/lib/albums/data";
 
@@ -18,7 +19,7 @@ export function AlbumGrid({ albumSlug, slots, isParent }: { albumSlug: string; s
     startTransition(async () => {
       const supabase = createClient();
       const compressed = await compressImage(file);
-      const path = `${crypto.randomUUID()}-${compressed.name}`;
+      const path = safeStorageFilename(compressed.name);
       const { error: uploadError } = await supabase.storage.from("sticker-albums").upload(path, compressed);
       if (uploadError) {
         setError(`Échec de l'envoi : ${uploadError.message}`);

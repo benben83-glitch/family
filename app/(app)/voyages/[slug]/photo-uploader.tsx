@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { compressImage } from "@/lib/media/compress-image";
+import { safeStorageFilename } from "@/lib/media/safe-filename";
 import { addMedia } from "./actions";
 
 export function PhotoUploader({ tripId, tripSlug }: { tripId: string; tripSlug: string }) {
@@ -17,7 +18,7 @@ export function PhotoUploader({ tripId, tripSlug }: { tripId: string; tripSlug: 
     for (const file of Array.from(files)) {
       const type = file.type.startsWith("video/") ? "video" : "photo";
       const uploadFile = type === "photo" ? await compressImage(file) : file;
-      const path = `${tripId}/${crypto.randomUUID()}-${uploadFile.name}`;
+      const path = `${tripId}/${safeStorageFilename(uploadFile.name)}`;
 
       const { error: uploadError } = await supabase.storage.from("trip-media").upload(path, uploadFile);
       if (uploadError) {

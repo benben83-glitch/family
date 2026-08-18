@@ -3,6 +3,7 @@
 import { useState, useTransition, type FormEvent } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { compressImage } from "@/lib/media/compress-image";
+import { safeStorageFilename } from "@/lib/media/safe-filename";
 import { createAlbum } from "../actions";
 
 export function CreateAlbumForm() {
@@ -21,7 +22,7 @@ export function CreateAlbumForm() {
       if (file && file.size > 0) {
         const supabase = createClient();
         const compressed = await compressImage(file);
-        const path = `${crypto.randomUUID()}-${compressed.name}`;
+        const path = safeStorageFilename(compressed.name);
         const { error: uploadError } = await supabase.storage.from("sticker-albums").upload(path, compressed);
         if (uploadError) {
           setError(`Échec de l'envoi du décor : ${uploadError.message}`);
