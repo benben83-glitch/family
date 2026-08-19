@@ -2,6 +2,7 @@ import Link from "next/link";
 
 const GAMES = [
   { emoji: "🧩", title: "Memory", description: "Retrouve les paires d'animaux.", href: "/explorateurs/jeux/memory", available: true },
+  { emoji: "🦁", title: "Morpion", description: "Lion contre Crocodile.", href: "/explorateurs/jeux/morpion", available: true },
   { emoji: "🔍", title: "Cherche et trouve", description: "Retrouve un animal dans une photo de voyage.", href: null, available: false },
 ];
 
