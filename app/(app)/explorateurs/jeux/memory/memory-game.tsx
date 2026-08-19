@@ -2,14 +2,37 @@
 
 import { useState } from "react";
 
-type MemoryAnimal = { id: string; name: string; signedImageUrl: string };
-type LayoutCard = { key: string; animalId: string; name: string; imageUrl: string };
+type Phase = "setup" | "preview" | "playing" | "finished";
+type LayoutCard = { key: string; animalId: string; emoji: string; name: string };
 
-const LEVELS = [
-  { label: "Facile", pairs: 3, totalCards: 6 },
-  { label: "Moyen", pairs: 6, totalCards: 12 },
-  { label: "Difficile", pairs: 10, totalCards: 20 },
+const ANIMALS = [
+  { id: "lion", emoji: "🦁", name: "Lion" },
+  { id: "elephant", emoji: "🐘", name: "Éléphant" },
+  { id: "girafe", emoji: "🦒", name: "Girafe" },
+  { id: "singe", emoji: "🐒", name: "Singe" },
+  { id: "zebre", emoji: "🦓", name: "Zèbre" },
+  { id: "tigre", emoji: "🐯", name: "Tigre" },
+  { id: "panda", emoji: "🐼", name: "Panda" },
+  { id: "renard", emoji: "🦊", name: "Renard" },
+  { id: "koala", emoji: "🐨", name: "Koala" },
+  { id: "grenouille", emoji: "🐸", name: "Grenouille" },
+  { id: "poulpe", emoji: "🐙", name: "Poulpe" },
+  { id: "papillon", emoji: "🦋", name: "Papillon" },
+  { id: "tortue", emoji: "🐢", name: "Tortue" },
+  { id: "hibou", emoji: "🦉", name: "Hibou" },
+  { id: "dauphin", emoji: "🐬", name: "Dauphin" },
 ];
+
+const PLAYERS = [
+  { label: "Bleu", color: "#3d6fd9" },
+  { label: "Jaune", color: "#c99a1f" },
+  { label: "Rouge", color: "#d94f4f" },
+  { label: "Vert", color: "#4f9e5a" },
+];
+
+const PREVIEW_MS = 2500;
+const MATCH_PAUSE_MS = 600;
+const MISMATCH_PAUSE_MS = 1100;
 
 function shuffle<T>(items: T[]): T[] {
   const copy = [...items];
@@ -20,53 +43,68 @@ function shuffle<T>(items: T[]): T[] {
   return copy;
 }
 
-export function MemoryGame({ animals }: { animals: MemoryAnimal[] }) {
+export function MemoryGame() {
+  const [phase, setPhase] = useState<Phase>("setup");
+  const [playerCount, setPlayerCount] = useState(2);
   const [layout, setLayout] = useState<LayoutCard[]>([]);
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
-  const [matched, setMatched] = useState<Set<string>>(new Set());
+  const [matched, setMatched] = useState<Record<string, number>>({});
   const [pendingPair, setPendingPair] = useState<string[]>([]);
-  const [moves, setMoves] = useState(0);
+  const [currentPlayer, setCurrentPlayer] = useState(0);
+  const [scores, setScores] = useState<number[]>([]);
   const [isBusy, setIsBusy] = useState(false);
-  const [level, setLevel] = useState<number | null>(null);
 
-  function startLevel(pairs: number) {
-    const chosen = shuffle(animals).slice(0, pairs);
-    const newLayout = shuffle(
-      chosen.flatMap((animal) => [
-        { key: `${animal.id}-a`, animalId: animal.id, name: animal.name, imageUrl: animal.signedImageUrl },
-        { key: `${animal.id}-b`, animalId: animal.id, name: animal.name, imageUrl: animal.signedImageUrl },
+  function startGame(count: number) {
+    const deck = shuffle(
+      ANIMALS.flatMap((animal) => [
+        { key: `${animal.id}-a`, animalId: animal.id, emoji: animal.emoji, name: animal.name },
+        { key: `${animal.id}-b`, animalId: animal.id, emoji: animal.emoji, name: animal.name },
       ])
     );
-    setLayout(newLayout);
-    setRevealed(new Set());
-    setMatched(new Set());
+    setLayout(deck);
+    setPlayerCount(count);
+    setScores(new Array(count).fill(0));
+    setCurrentPlayer(0);
+    setMatched({});
     setPendingPair([]);
-    setMoves(0);
-    setIsBusy(false);
-    setLevel(pairs);
+    setRevealed(new Set(deck.map((c) => c.key)));
+    setIsBusy(true);
+    setPhase("preview");
+
+    setTimeout(() => {
+      setRevealed(new Set());
+      setIsBusy(false);
+      setPhase("playing");
+    }, PREVIEW_MS);
   }
 
   function handleFlip(key: string) {
-    if (isBusy || matched.has(key) || revealed.has(key) || pendingPair.length === 2) return;
+    if (isBusy || phase !== "playing") return;
+    if (matched[key] !== undefined || revealed.has(key) || pendingPair.length === 2) return;
 
-    const nextRevealed = new Set(revealed);
-    nextRevealed.add(key);
-    setRevealed(nextRevealed);
-
+    setRevealed((prev) => new Set(prev).add(key));
     const nextPending = [...pendingPair, key];
     setPendingPair(nextPending);
 
     if (nextPending.length === 2) {
-      setMoves((m) => m + 1);
+      setIsBusy(true);
       const [firstKey, secondKey] = nextPending;
       const first = layout.find((c) => c.key === firstKey);
       const second = layout.find((c) => c.key === secondKey);
+      const winner = currentPlayer;
 
       if (first && second && first.animalId === second.animalId) {
-        setMatched((prev) => new Set(prev).add(firstKey).add(secondKey));
-        setPendingPair([]);
+        setTimeout(() => {
+          setMatched((prev) => {
+            const next = { ...prev, [firstKey]: winner, [secondKey]: winner };
+            if (Object.keys(next).length === layout.length) setPhase("finished");
+            return next;
+          });
+          setScores((prev) => prev.map((s, i) => (i === winner ? s + 1 : s)));
+          setPendingPair([]);
+          setIsBusy(false);
+        }, MATCH_PAUSE_MS);
       } else {
-        setIsBusy(true);
         setTimeout(() => {
           setRevealed((prev) => {
             const next = new Set(prev);
@@ -76,89 +114,109 @@ export function MemoryGame({ animals }: { animals: MemoryAnimal[] }) {
           });
           setPendingPair([]);
           setIsBusy(false);
-        }, 900);
+          setCurrentPlayer((p) => (p + 1) % playerCount);
+        }, MISMATCH_PAUSE_MS);
       }
     }
   }
 
-  if (level === null) {
+  if (phase === "setup") {
     return (
       <div className="flex flex-col items-center gap-4 py-8">
-        <p className="text-muted text-sm">Choisis un niveau :</p>
+        <p className="text-muted text-sm">Combien de joueurs ?</p>
         <div className="flex flex-wrap gap-3 justify-center">
-          {LEVELS.map((lvl) => {
-            const disabled = animals.length < lvl.pairs;
-            return (
-              <button
-                key={lvl.label}
-                type="button"
-                disabled={disabled}
-                onClick={() => startLevel(lvl.pairs)}
-                className="bg-card border border-border rounded-2xl px-6 py-4 flex flex-col items-center gap-1 hover:shadow-md hover:-translate-y-0.5 transition-all disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none"
-              >
-                <span className="font-display text-lg text-primary">{lvl.label}</span>
-                <span className="text-xs text-muted">{lvl.totalCards} cartes</span>
-                {disabled && <span className="text-xs text-red-700">Pas assez d&apos;animaux débloqués</span>}
-              </button>
-            );
-          })}
+          {[1, 2, 3, 4].map((count) => (
+            <button
+              key={count}
+              type="button"
+              onClick={() => startGame(count)}
+              className="bg-card border border-border rounded-2xl px-6 py-4 flex flex-col items-center gap-2 hover:shadow-md hover:-translate-y-0.5 transition-all"
+            >
+              <span className="font-display text-2xl text-primary">{count}</span>
+              <div className="flex gap-1">
+                {PLAYERS.slice(0, count).map((p) => (
+                  <span key={p.label} className="w-3 h-3 rounded-full" style={{ backgroundColor: p.color }} />
+                ))}
+              </div>
+            </button>
+          ))}
         </div>
       </div>
     );
   }
 
-  const isWon = layout.length > 0 && matched.size === layout.length;
-  const columns = layout.length <= 6 ? "grid-cols-3" : layout.length <= 12 ? "grid-cols-4" : "grid-cols-5";
+  if (phase === "finished") {
+    const maxScore = Math.max(...scores);
+    const winners = scores.flatMap((score, i) => (score === maxScore ? [i] : []));
+    const isTie = winners.length > 1;
 
-  if (isWon) {
     return (
       <div className="flex flex-col items-center gap-4 py-12 text-center">
         <span className="text-5xl">🏆</span>
-        <p className="font-display text-2xl text-primary">Bravo ! Terminé en {moves} coups</p>
-        <div className="flex gap-3">
-          <button type="button" onClick={() => startLevel(level)} className="rounded-full bg-primary text-primary-foreground text-sm px-5 py-2.5 hover:opacity-90 transition-opacity">
-            Rejouer
-          </button>
-          <button type="button" onClick={() => setLevel(null)} className="rounded-full border border-border text-sm px-5 py-2.5 hover:bg-primary/5 transition-colors">
-            Changer de niveau
-          </button>
-        </div>
+        <p className="font-display text-2xl text-primary">
+          {playerCount === 1 ? "Bravo, terminé !" : isTie ? "Égalité !" : `${PLAYERS[winners[0]].label} gagne !`}
+        </p>
+        {playerCount > 1 && (
+          <div className="flex gap-4">
+            {scores.map((score, i) => (
+              <div key={i} className="flex flex-col items-center gap-1">
+                <span className="w-4 h-4 rounded-full" style={{ backgroundColor: PLAYERS[i].color }} />
+                <span className="text-sm">{score} paire{score > 1 ? "s" : ""}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        <button type="button" onClick={() => setPhase("setup")} className="rounded-full bg-primary text-primary-foreground text-sm px-5 py-2.5 hover:opacity-90 transition-opacity">
+          Rejouer
+        </button>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between text-sm text-muted">
-        <span>Coups : {moves}</span>
-        <button type="button" onClick={() => setLevel(null)} className="text-accent hover:underline">
-          Changer de niveau
-        </button>
-      </div>
+      {playerCount > 1 && (
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          {PLAYERS.slice(0, playerCount).map((p, i) => (
+            <div
+              key={p.label}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full border-2 transition-all"
+              style={{ borderColor: i === currentPlayer && phase === "playing" ? p.color : "transparent", opacity: phase === "playing" && i !== currentPlayer ? 0.6 : 1 }}
+            >
+              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: p.color }} />
+              <span className="text-sm">{scores[i]}</span>
+            </div>
+          ))}
+        </div>
+      )}
 
-      <div className={`grid ${columns} gap-2.5 sm:gap-3`}>
+      {phase === "preview" && <p className="text-center text-sm text-muted">Mémorise bien… les cartes se retournent dans un instant !</p>}
+
+      <div className="grid grid-cols-5 sm:grid-cols-6 gap-2 sm:gap-3">
         {layout.map((card) => {
-          const isFaceUp = matched.has(card.key) || revealed.has(card.key);
+          const winner = matched[card.key];
+          const isFaceUp = winner !== undefined || revealed.has(card.key);
+          const ringColor = winner !== undefined ? PLAYERS[winner].color : undefined;
+
           return (
             <button
               key={card.key}
               type="button"
               onClick={() => handleFlip(card.key)}
-              disabled={isFaceUp}
-              className="aspect-[3/4] [perspective:800px]"
+              disabled={isFaceUp || phase !== "playing"}
+              className="aspect-square [perspective:800px]"
               aria-label={isFaceUp ? card.name : "Carte retournée"}
             >
               <div
                 className="relative w-full h-full transition-transform duration-300 [transform-style:preserve-3d]"
                 style={{ transform: isFaceUp ? "rotateY(180deg)" : "rotateY(0deg)" }}
               >
-                <div className="absolute inset-0 rounded-xl bg-primary flex items-center justify-center text-2xl [backface-visibility:hidden]">🧭</div>
+                <div className="absolute inset-0 rounded-xl bg-primary flex items-center justify-center text-lg sm:text-xl [backface-visibility:hidden]">🧭</div>
                 <div
-                  className="absolute inset-0 rounded-xl overflow-hidden border-2 border-border bg-card [backface-visibility:hidden]"
-                  style={{ transform: "rotateY(180deg)" }}
+                  className="absolute inset-0 rounded-xl flex items-center justify-center text-xl sm:text-2xl bg-card border-2 [backface-visibility:hidden]"
+                  style={{ transform: "rotateY(180deg)", borderColor: ringColor ?? "var(--border)" }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={card.imageUrl} alt={card.name} className="w-full h-full object-cover" />
+                  {card.emoji}
                 </div>
               </div>
             </button>
