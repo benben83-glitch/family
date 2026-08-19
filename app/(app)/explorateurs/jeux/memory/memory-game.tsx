@@ -192,7 +192,7 @@ export function MemoryGame() {
 
       {phase === "preview" && <p className="text-center text-sm text-muted">Mémorise bien… les cartes se retournent dans un instant !</p>}
 
-      <div className="grid grid-cols-5 sm:grid-cols-6 gap-2 sm:gap-3">
+      <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-1.5 sm:gap-2 max-w-2xl mx-auto w-full">
         {layout.map((card) => {
           const winner = matched[card.key];
           const isFaceUp = winner !== undefined || revealed.has(card.key);
@@ -211,9 +211,9 @@ export function MemoryGame() {
                 className="relative w-full h-full transition-transform duration-300 [transform-style:preserve-3d]"
                 style={{ transform: isFaceUp ? "rotateY(180deg)" : "rotateY(0deg)" }}
               >
-                <div className="absolute inset-0 rounded-xl bg-primary flex items-center justify-center text-lg sm:text-xl [backface-visibility:hidden]">🧭</div>
+                <div className="absolute inset-0 rounded-lg bg-primary flex items-center justify-center text-xs sm:text-sm [backface-visibility:hidden]">🧭</div>
                 <div
-                  className="absolute inset-0 rounded-xl flex items-center justify-center text-xl sm:text-2xl bg-card border-2 [backface-visibility:hidden]"
+                  className="absolute inset-0 rounded-lg flex items-center justify-center text-sm sm:text-base bg-card border-2 [backface-visibility:hidden]"
                   style={{ transform: "rotateY(180deg)", borderColor: ringColor ?? "var(--border)" }}
                 >
                   {card.emoji}
