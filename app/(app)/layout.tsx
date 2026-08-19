@@ -1,8 +1,13 @@
 import { requireFamilyProfile } from "@/lib/auth/session";
 import { Nav } from "./nav";
+import { PendingScreen } from "./pending-screen";
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const profile = await requireFamilyProfile();
+
+  if (profile.status === "pending") {
+    return <PendingScreen fullName={profile.full_name} />;
+  }
 
   return (
     <div className="flex-1 flex flex-col">

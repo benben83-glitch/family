@@ -1,10 +1,12 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+const PUBLIC_PATHS = ["/login", "/signup"];
+
 /**
  * Rafraîchit la session Supabase à chaque requête et protège tout le site :
- * l'app entière est privée (carnet de voyage familial), seule /login reste
- * accessible sans session.
+ * l'app entière est privée (carnet de voyage familial), seuls /login et
+ * /signup restent accessibles sans session.
  */
 export async function updateSession(request: NextRequest) {
   const supabaseResponse = NextResponse.next({ request });
@@ -27,8 +29,9 @@ export async function updateSession(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
   const isLoginRoute = pathname === "/login";
+  const isPublicRoute = PUBLIC_PATHS.includes(pathname);
 
-  if (!isLoginRoute && !user) {
+  if (!isPublicRoute && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname);

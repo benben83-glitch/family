@@ -14,6 +14,7 @@ const LINKS = [
 
 export function Nav({ profile }: { profile: FamilyProfile }) {
   const pathname = usePathname();
+  const links = profile.role === "parent" ? [...LINKS, { href: "/famille", label: "Famille" }] : LINKS;
 
   return (
     <header className="sticky top-0 z-20 bg-background/95 backdrop-blur border-b border-border">
@@ -24,7 +25,7 @@ export function Nav({ profile }: { profile: FamilyProfile }) {
         </Link>
 
         <nav className="flex items-center gap-1 text-sm">
-          {LINKS.map((link) => {
+          {links.map((link) => {
             const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
             return (
               <Link

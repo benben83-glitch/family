@@ -7,12 +7,15 @@ export type FamilyProfile = {
   full_name: string | null;
   avatar_url: string | null;
   role: "parent" | "adulte";
+  status: "pending" | "active";
 };
 
 /**
  * Le compte auth existe (proxy.ts l'a déjà garanti) mais peut ne pas encore
  * avoir de ligne `profiles` (le trigger handle_new_user tourne à la création
  * du compte auth, pas avant) : on redirige vers /login plutôt que de planter.
+ * Ne filtre pas sur status ici : le layout décide quoi afficher à un compte
+ * "pending" (écran d'attente plutôt que redirection).
  */
 export async function requireFamilyProfile(): Promise<FamilyProfile> {
   const supabase = await createClient();
@@ -24,7 +27,7 @@ export async function requireFamilyProfile(): Promise<FamilyProfile> {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, email, full_name, avatar_url, role")
+    .select("id, email, full_name, avatar_url, role, status")
     .eq("id", user.id)
     .maybeSingle();
 

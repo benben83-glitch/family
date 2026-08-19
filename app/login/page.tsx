@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { LoginForm } from "./login-form";
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
@@ -21,6 +22,13 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
             Ce compte n&apos;a pas encore de profil famille. Demande à un parent de le créer.
           </p>
         )}
+
+        <p className="text-center text-sm text-muted mt-6">
+          Pas encore de compte ?{" "}
+          <Link href="/signup" className="text-accent hover:underline">
+            Demander à rejoindre la famille
+          </Link>
+        </p>
       </div>
     </div>
   );
