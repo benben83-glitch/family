@@ -38,7 +38,11 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (isLoginRoute && user) {
+  // Un compte authentifié mais sans profil famille valide (ligne manquante,
+  // colonne pas encore migrée...) est redirigé ici avec ?error= : ne PAS le
+  // renvoyer vers "/" dans ce cas, sinon boucle infinie ("/" redemande un
+  // profil, échoue, revient sur /login, qui rebondit sur "/", etc.).
+  if (isLoginRoute && user && !request.nextUrl.searchParams.has("error")) {
     const url = request.nextUrl.clone();
     url.pathname = "/";
     url.search = "";
