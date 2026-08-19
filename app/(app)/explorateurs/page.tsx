@@ -11,7 +11,7 @@ const ACTIVITIES = [
   { emoji: "📖", title: "Mon album", href: "/explorateurs/album", available: true },
   { emoji: "🎨", title: "Je dessine", href: "/explorateurs/dessin", available: true },
   { emoji: "🧠", title: "Quiz", href: "/explorateurs/quiz", available: true },
-  { emoji: "🎮", title: "Jeux", href: null, available: false },
+  { emoji: "🎮", title: "Jeux", href: "/explorateurs/jeux", available: true },
   { emoji: "🏆", title: "Mes trophées", href: null, available: false },
 ];
 
