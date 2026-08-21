@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireFamilyProfile } from "@/lib/auth/session";
 import { CreateAlbumForm } from "./create-album-form";
+import { ExplorersPageHeader } from "../../page-header";
 
 export default async function NewAlbumPage() {
   const profile = await requireFamilyProfile();
@@ -8,7 +9,7 @@ export default async function NewAlbumPage() {
 
   return (
     <div className="max-w-xl mx-auto flex flex-col gap-6">
-      <h1 className="font-display text-3xl text-primary">Nouvel album</h1>
+      <ExplorersPageHeader title="Nouvel album" />
       <CreateAlbumForm />
     </div>
   );

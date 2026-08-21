@@ -46,7 +46,7 @@ export function AlbumGrid({ albumSlug, slots, isParent }: { albumSlug: string; s
     <div className="flex flex-col gap-3">
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
         {slots.map((slot) => (
-          <div key={slot.id} className="relative aspect-[3/4] rounded-xl overflow-hidden border-2 border-dashed border-border bg-card/50">
+          <div key={slot.id} className="relative aspect-[3/4] rounded-xl overflow-hidden border-2 border-dashed border-white/70 bg-card/85">
             {slot.signedImageUrl ? (
               <>
                 <button

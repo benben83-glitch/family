@@ -51,7 +51,7 @@ export default async function ExplorersPage() {
               {activity.title}
             </Link>
           ) : (
-            <div key={activity.title} className="flex items-center gap-2 rounded-full bg-white/70 text-muted font-display text-sm sm:text-base px-5 py-2.5 border border-dashed border-border opacity-80">
+            <div key={activity.title} className="flex items-center gap-2 rounded-full bg-white/85 text-muted font-display text-sm sm:text-base px-5 py-2.5 border border-dashed border-white/70 shadow-sm opacity-90">
               <span className="text-lg grayscale">{activity.emoji}</span>
               {activity.title} <span className="text-xs">(bientôt)</span>
             </div>

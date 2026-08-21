@@ -2,23 +2,26 @@ import Link from "next/link";
 import Image from "next/image";
 import { listAlbums } from "@/lib/albums/data";
 import { requireFamilyProfile } from "@/lib/auth/session";
+import { ExplorersPageHeader } from "../page-header";
 
 export default async function AlbumsPage() {
   const [profile, albums] = await Promise.all([requireFamilyProfile(), listAlbums()]);
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <h1 className="font-display text-3xl text-primary">Mon album</h1>
-        {profile.role === "parent" && (
-          <Link href="/explorateurs/album/nouveau" className="rounded-full bg-accent text-accent-foreground text-sm px-4 py-2 hover:opacity-90 transition-opacity">
-            + Nouvel album
-          </Link>
-        )}
-      </div>
+      <ExplorersPageHeader
+        title="Mon album"
+        action={
+          profile.role === "parent" && (
+            <Link href="/explorateurs/album/nouveau" className="rounded-full bg-accent text-accent-foreground text-sm px-4 py-2 hover:opacity-90 transition-opacity">
+              + Nouvel album
+            </Link>
+          )
+        }
+      />
 
       {albums.length === 0 ? (
-        <p className="text-muted text-sm">Aucun album créé pour l&apos;instant.</p>
+        <p className="on-bg text-sm">Aucun album créé pour l&apos;instant.</p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {albums.map((album) => (

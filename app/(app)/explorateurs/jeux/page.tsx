@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ExplorersPageHeader } from "../page-header";
 
 const GAMES = [
   { emoji: "🧩", title: "Memory", description: "Retrouve les paires d'animaux.", href: "/explorateurs/jeux/memory", available: true },
@@ -10,10 +11,7 @@ const GAMES = [
 export default function GamesPage() {
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="font-display text-3xl text-primary">Jeux</h1>
-        <p className="text-muted text-sm mt-1">Des petits jeux avec les animaux découverts pendant nos voyages.</p>
-      </div>
+      <ExplorersPageHeader title="Jeux" subtitle="Des petits jeux avec les animaux découverts pendant nos voyages." />
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         {GAMES.map((game) =>
@@ -28,7 +26,7 @@ export default function GamesPage() {
               <p className="text-xs text-muted">{game.description}</p>
             </Link>
           ) : (
-            <div key={game.title} className="bg-card/50 border border-dashed border-border rounded-2xl p-6 flex flex-col items-center text-center gap-2 opacity-60">
+            <div key={game.title} className="bg-card/85 border border-dashed border-white/70 rounded-2xl p-6 flex flex-col items-center text-center gap-2 opacity-80">
               <span className="text-4xl grayscale">{game.emoji}</span>
               <p className="font-display text-lg text-muted">{game.title}</p>
               <p className="text-xs text-muted">Bientôt</p>

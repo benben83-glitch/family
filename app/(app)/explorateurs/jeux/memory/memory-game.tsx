@@ -123,7 +123,7 @@ export function MemoryGame() {
   if (phase === "setup") {
     return (
       <div className="flex flex-col items-center gap-4 py-8">
-        <p className="text-muted text-sm">Combien de joueurs ?</p>
+        <p className="on-bg text-sm">Combien de joueurs ?</p>
         <div className="flex flex-wrap gap-3 justify-center">
           {[1, 2, 3, 4].map((count) => (
             <button
@@ -153,7 +153,7 @@ export function MemoryGame() {
     return (
       <div className="flex flex-col items-center gap-4 py-12 text-center">
         <span className="text-5xl">🏆</span>
-        <p className="font-display text-2xl text-primary">
+        <p className="font-display text-2xl on-bg">
           {playerCount === 1 ? "Bravo, terminé !" : isTie ? "Égalité !" : `${PLAYERS[winners[0]].label} gagne !`}
         </p>
         {playerCount > 1 && (
@@ -161,7 +161,7 @@ export function MemoryGame() {
             {scores.map((score, i) => (
               <div key={i} className="flex flex-col items-center gap-1">
                 <span className="w-4 h-4 rounded-full" style={{ backgroundColor: PLAYERS[i].color }} />
-                <span className="text-sm">{score} paire{score > 1 ? "s" : ""}</span>
+                <span className="text-sm on-bg">{score} paire{score > 1 ? "s" : ""}</span>
               </div>
             ))}
           </div>
@@ -180,7 +180,7 @@ export function MemoryGame() {
           {PLAYERS.slice(0, playerCount).map((p, i) => (
             <div
               key={p.label}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full border-2 transition-all"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full border-2 bg-card/90 shadow-sm transition-all"
               style={{ borderColor: i === currentPlayer && phase === "playing" ? p.color : "transparent", opacity: phase === "playing" && i !== currentPlayer ? 0.6 : 1 }}
             >
               <span className="w-3 h-3 rounded-full" style={{ backgroundColor: p.color }} />
@@ -190,7 +190,7 @@ export function MemoryGame() {
         </div>
       )}
 
-      {phase === "preview" && <p className="text-center text-sm text-muted">Mémorise bien… les cartes se retournent dans un instant !</p>}
+      {phase === "preview" && <p className="text-center text-sm on-bg">Mémorise bien… les cartes se retournent dans un instant !</p>}
 
       <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-1.5 sm:gap-2 max-w-2xl mx-auto w-full">
         {layout.map((card) => {

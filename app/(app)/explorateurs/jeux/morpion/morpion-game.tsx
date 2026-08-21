@@ -69,21 +69,21 @@ export function MorpionGame() {
     <div className="flex flex-col items-center gap-6">
       <div className="flex items-center gap-6">
         <ScoreBadge mark="lion" score={scores.lion} isActive={!isOver && currentPlayer === "lion"} />
-        <span className="text-muted text-sm">Nuls : {scores.draws}</span>
+        <span className="on-bg text-sm">Nuls : {scores.draws}</span>
         <ScoreBadge mark="croco" score={scores.croco} isActive={!isOver && currentPlayer === "croco"} />
       </div>
 
       {!isOver && (
-        <p className="text-sm text-muted">
+        <p className="text-sm on-bg">
           Au tour de {PLAYERS[currentPlayer].emoji} {PLAYERS[currentPlayer].label}
         </p>
       )}
       {isOver && result?.winner && (
-        <p className="font-display text-xl text-primary">
+        <p className="font-display text-xl on-bg">
           {PLAYERS[result.winner].emoji} {PLAYERS[result.winner].label} gagne !
         </p>
       )}
-      {isOver && !result?.winner && <p className="font-display text-xl text-primary">Match nul !</p>}
+      {isOver && !result?.winner && <p className="font-display text-xl on-bg">Match nul !</p>}
 
       <div className="grid grid-cols-3 gap-2 w-full max-w-xs">
         {board.map((cell, index) => {
@@ -115,7 +115,7 @@ export function MorpionGame() {
 
 function ScoreBadge({ mark, score, isActive }: { mark: Mark; score: number; isActive: boolean }) {
   return (
-    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border-2 transition-colors ${isActive ? "border-primary" : "border-transparent"}`}>
+    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border-2 bg-card/90 shadow-sm transition-colors ${isActive ? "border-primary" : "border-transparent"}`}>
       <span className="text-2xl">{PLAYERS[mark].emoji}</span>
       <span className="text-sm font-medium">{score}</span>
     </div>

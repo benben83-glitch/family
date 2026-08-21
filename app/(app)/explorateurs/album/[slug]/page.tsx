@@ -31,7 +31,7 @@ export default async function AlbumPage({ params }: PageProps<"/explorateurs/alb
       <AlbumGrid albumSlug={album.slug} slots={slots} isParent={isParent} />
 
       {isParent && (
-        <div className="pt-4 border-t border-border">
+        <div className="pt-2">
           <DeleteAlbumButton albumId={album.id} />
         </div>
       )}

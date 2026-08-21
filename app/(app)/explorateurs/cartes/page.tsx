@@ -3,28 +3,27 @@ import Image from "next/image";
 import { listAnimalCardsWithCollectionStatus } from "@/lib/animals/data";
 import { requireFamilyProfile } from "@/lib/auth/session";
 import { rarityOption } from "@/lib/animals/types";
+import { ExplorersPageHeader } from "../page-header";
 
 export default async function CardsPage() {
   const [profile, cards] = await Promise.all([requireFamilyProfile(), listAnimalCardsWithCollectionStatus()]);
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="font-display text-3xl text-primary">Mes cartes</h1>
-          <p className="text-muted text-sm mt-1">
-            {cards.filter((c) => c.unlocked).length} / {cards.length} cartes débloquées
-          </p>
-        </div>
-        {profile.role === "parent" && (
-          <Link href="/explorateurs/cartes/nouvelle" className="rounded-full bg-accent text-accent-foreground text-sm px-4 py-2 hover:opacity-90 transition-opacity">
-            + Créer une carte
-          </Link>
-        )}
-      </div>
+      <ExplorersPageHeader
+        title="Mes cartes"
+        subtitle={`${cards.filter((c) => c.unlocked).length} / ${cards.length} cartes débloquées`}
+        action={
+          profile.role === "parent" && (
+            <Link href="/explorateurs/cartes/nouvelle" className="rounded-full bg-accent text-accent-foreground text-sm px-4 py-2 hover:opacity-90 transition-opacity">
+              + Créer une carte
+            </Link>
+          )
+        }
+      />
 
       {cards.length === 0 ? (
-        <p className="text-muted text-sm">Aucune carte créée pour l&apos;instant.</p>
+        <p className="on-bg text-sm">Aucune carte créée pour l&apos;instant.</p>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {cards.map((card) => {
@@ -34,7 +33,7 @@ export default async function CardsPage() {
               return (
                 <div
                   key={card.id}
-                  className="aspect-[3/4] rounded-2xl border-2 border-dashed border-border bg-card/50 flex flex-col items-center justify-center gap-2 text-center px-3"
+                  className="aspect-[3/4] rounded-2xl border-2 border-dashed border-white/70 bg-card/70 flex flex-col items-center justify-center gap-2 text-center px-3"
                 >
                   <span className="text-3xl grayscale opacity-50">🔒</span>
                   <p className="text-sm text-muted">???</p>

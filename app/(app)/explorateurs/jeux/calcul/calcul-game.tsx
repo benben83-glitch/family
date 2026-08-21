@@ -100,7 +100,7 @@ export function CalculGame() {
   if (level === null) {
     return (
       <div className="flex flex-col items-center gap-4 py-8">
-        <p className="text-muted text-sm">Choisis un niveau :</p>
+        <p className="on-bg text-sm">Choisis un niveau :</p>
         <div className="flex flex-wrap gap-3 justify-center">
           {LEVELS.map((lvl) => (
             <button
@@ -122,14 +122,14 @@ export function CalculGame() {
     return (
       <div className="flex flex-col items-center gap-4 py-12 text-center">
         <span className="text-5xl">🏆</span>
-        <p className="font-display text-2xl text-primary">
+        <p className="font-display text-2xl on-bg">
           {score} / {problems.length} bonnes réponses !
         </p>
         <div className="flex gap-3">
           <button type="button" onClick={() => startLevel(level)} className="rounded-full bg-primary text-primary-foreground text-sm px-5 py-2.5 hover:opacity-90 transition-opacity">
             Rejouer
           </button>
-          <button type="button" onClick={() => setLevel(null)} className="rounded-full border border-border text-sm px-5 py-2.5 hover:bg-primary/5 transition-colors">
+          <button type="button" onClick={() => setLevel(null)} className="rounded-full bg-card border border-border text-sm px-5 py-2.5 hover:bg-primary/5 transition-colors shadow-sm">
             Changer de niveau
           </button>
         </div>
@@ -152,14 +152,14 @@ export function CalculGame() {
 
   return (
     <div className="max-w-sm mx-auto flex flex-col gap-5">
-      <div className="flex items-center justify-between text-sm text-muted">
+      <div className="flex items-center justify-between text-sm on-bg">
         <span>
           Question {index + 1} / {problems.length}
         </span>
         <span>Score : {score}</span>
       </div>
 
-      <p className="font-display text-4xl text-primary text-center">
+      <p className="font-display text-4xl on-bg text-center">
         {current.a} {current.op} {current.b} = ?
       </p>
 

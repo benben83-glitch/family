@@ -29,22 +29,22 @@ export function ChildPicker({ childProfiles }: { childProfiles: ChildProfile[] }
   return (
     <div className="flex flex-col items-center gap-3">
       {selected ? (
-        <p className="text-muted text-sm">
+        <p className="on-bg text-sm font-medium">
           Salut {selected.full_name} {selected.avatar_emoji} —{" "}
-          <button type="button" onClick={() => setSelectedId(null)} className="underline hover:text-foreground transition-colors">
+          <button type="button" onClick={() => setSelectedId(null)} className="underline hover:opacity-80 transition-opacity">
             ce n&apos;est pas toi ?
           </button>
         </p>
       ) : (
         <>
-          <p className="text-muted text-sm">Qui explore aujourd&apos;hui ?</p>
+          <p className="on-bg text-sm font-medium">Qui explore aujourd&apos;hui ?</p>
           <div className="flex items-center gap-3 flex-wrap justify-center">
             {childProfiles.map((child) => (
               <button
                 key={child.id}
                 type="button"
                 onClick={() => select(child)}
-                className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl hover:bg-primary/10 transition-colors"
+                className="flex flex-col items-center gap-1 px-3 py-2 rounded-xl bg-card/90 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all"
               >
                 <span className="text-3xl">{child.avatar_emoji}</span>
                 <span className="text-sm font-medium">{child.full_name}</span>

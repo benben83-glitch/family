@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireFamilyProfile } from "@/lib/auth/session";
 import { CreateCardForm } from "./create-card-form";
+import { ExplorersPageHeader } from "../../page-header";
 
 export default async function NewCardPage() {
   const profile = await requireFamilyProfile();
@@ -8,7 +9,7 @@ export default async function NewCardPage() {
 
   return (
     <div className="max-w-xl mx-auto flex flex-col gap-6">
-      <h1 className="font-display text-3xl text-primary">Nouvelle carte animal</h1>
+      <ExplorersPageHeader title="Nouvelle carte animal" />
       <CreateCardForm />
     </div>
   );

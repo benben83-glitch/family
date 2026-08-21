@@ -65,3 +65,9 @@ body {
   margin-left: -50vw;
   margin-right: -50vw;
 }
+
+/* Texte posé directement sur le fond illustré (hors carte blanche) : blanc + ombre portée pour rester lisible. */
+.on-bg {
+  color: #ffffff;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+}

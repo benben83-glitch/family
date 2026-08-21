@@ -34,17 +34,17 @@ export function CreateChallengeForm({ photos }: { photos: TripPhoto[] }) {
 
     return (
       <div className="flex flex-col gap-6">
-        <p className="text-muted text-sm">Choisis une photo de voyage :</p>
+        <p className="on-bg text-sm">Choisis une photo de voyage :</p>
         {[...byTrip.entries()].map(([tripTitle, tripPhotos]) => (
           <div key={tripTitle} className="flex flex-col gap-2">
-            <p className="text-sm font-medium">{tripTitle}</p>
+            <p className="text-sm font-medium on-bg">{tripTitle}</p>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
               {tripPhotos.map((photo) => (
                 <button
                   key={photo.id}
                   type="button"
                   onClick={() => setSelectedPhoto(photo)}
-                  className="relative aspect-square rounded-lg overflow-hidden border border-border hover:ring-2 hover:ring-primary transition-all"
+                  className="relative aspect-square rounded-lg overflow-hidden border-2 border-white shadow-sm hover:ring-2 hover:ring-primary transition-all"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={photo.signedUrl} alt="" className="w-full h-full object-cover" />
@@ -59,13 +59,20 @@ export function CreateChallengeForm({ photos }: { photos: TripPhoto[] }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <button type="button" onClick={() => { setSelectedPhoto(null); setTarget(null); }} className="text-sm text-accent hover:underline self-start">
+      <button
+        type="button"
+        onClick={() => {
+          setSelectedPhoto(null);
+          setTarget(null);
+        }}
+        className="text-sm on-bg underline self-start"
+      >
         ← Choisir une autre photo
       </button>
 
-      <p className="text-sm text-muted">Clique sur la photo à l&apos;endroit où se trouve l&apos;animal à trouver :</p>
+      <p className="text-sm on-bg">Clique sur la photo à l&apos;endroit où se trouve l&apos;animal à trouver :</p>
 
-      <div className="relative rounded-2xl overflow-hidden border border-border">
+      <div className="relative rounded-2xl overflow-hidden border-2 border-white shadow-lg">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={imgRef} src={selectedPhoto.signedUrl} alt="" onClick={handlePickPoint} className="w-full h-auto cursor-crosshair select-none" />
         {target && (
@@ -76,7 +83,7 @@ export function CreateChallengeForm({ photos }: { photos: TripPhoto[] }) {
         )}
       </div>
 
-      <div className="flex flex-wrap items-end gap-3">
+      <div className="flex flex-wrap items-end gap-3 bg-card border border-border rounded-xl p-4 shadow-sm">
         <div className="flex flex-col gap-1">
           <label htmlFor="label" className="text-xs text-muted">
             Que doit trouver l&apos;enfant ?
@@ -99,10 +106,10 @@ export function CreateChallengeForm({ photos }: { photos: TripPhoto[] }) {
         >
           {isPending ? "Enregistrement…" : "Créer le défi"}
         </button>
-      </div>
 
-      {!target && <p className="text-xs text-muted">Clique sur la photo pour placer la cible.</p>}
-      {error && <p className="text-sm text-red-700">{error}</p>}
+        {!target && <p className="text-xs text-muted w-full">Clique sur la photo pour placer la cible.</p>}
+        {error && <p className="text-sm text-red-700 w-full">{error}</p>}
+      </div>
     </div>
   );
 }

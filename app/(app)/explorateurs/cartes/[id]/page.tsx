@@ -13,9 +13,9 @@ export default async function CardDetailPage({ params }: PageProps<"/explorateur
     return (
       <div className="flex flex-col items-center gap-4 py-16 text-center">
         <span className="text-5xl grayscale opacity-50">🔒</span>
-        <p className="font-display text-2xl text-primary">Carte pas encore débloquée</p>
-        <p className="text-muted text-sm max-w-xs">Cette carte apparaîtra ici dès qu&apos;elle sera associée à un voyage.</p>
-        <Link href="/explorateurs/cartes" className="text-accent hover:underline text-sm">
+        <p className="font-display text-2xl on-bg">Carte pas encore débloquée</p>
+        <p className="on-bg text-sm max-w-xs">Cette carte apparaîtra ici dès qu&apos;elle sera associée à un voyage.</p>
+        <Link href="/explorateurs/cartes" className="on-bg text-sm underline">
           ← Retour aux cartes
         </Link>
       </div>
@@ -28,7 +28,7 @@ export default async function CardDetailPage({ params }: PageProps<"/explorateur
 
   return (
     <div className="flex flex-col gap-6 max-w-2xl mx-auto">
-      <Link href="/explorateurs/cartes" className="text-accent hover:underline text-sm self-start">
+      <Link href="/explorateurs/cartes" className="on-bg text-sm self-start underline">
         ← Retour aux cartes
       </Link>
 
@@ -41,7 +41,7 @@ export default async function CardDetailPage({ params }: PageProps<"/explorateur
           )}
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 bg-card border border-border rounded-2xl p-5 shadow-sm">
           <div>
             <span className="text-xs font-medium px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: rarity.color }}>
               {rarity.label}
@@ -71,7 +71,7 @@ export default async function CardDetailPage({ params }: PageProps<"/explorateur
               <p className="text-xs text-muted mb-1">Découverte pendant :</p>
               <div className="flex flex-wrap gap-2">
                 {trips.map((trip) => (
-                  <Link key={trip.slug} href={`/voyages/${trip.slug}`} className="text-sm bg-card border border-border rounded-full px-3 py-1 hover:bg-primary/10 transition-colors">
+                  <Link key={trip.slug} href={`/voyages/${trip.slug}`} className="text-sm bg-background border border-border rounded-full px-3 py-1 hover:bg-primary/10 transition-colors">
                     {trip.title}
                   </Link>
                 ))}

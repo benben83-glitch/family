@@ -48,11 +48,11 @@ export function FindGame({ challenges, isParent }: { challenges: FindChallengeWi
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="font-display text-xl text-primary text-center">
+      <p className="font-display text-xl on-bg text-center">
         {found ? "Bravo, tu as trouvé ! 🎉" : `Peux-tu retrouver ${current.target_label} ?`}
       </p>
 
-      <div className="relative rounded-2xl overflow-hidden border border-border">
+      <div className="relative rounded-2xl overflow-hidden border-2 border-white shadow-lg">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img ref={imgRef} src={current.signedUrl} alt="" onClick={handleClick} className={`w-full h-auto select-none ${found ? "" : "cursor-crosshair"}`} />
 
@@ -72,7 +72,7 @@ export function FindGame({ challenges, isParent }: { challenges: FindChallengeWi
         )}
       </div>
 
-      {!found && markers.length > 0 && <p className="text-center text-sm text-muted">Pas tout à fait ! Essaie encore.</p>}
+      {!found && markers.length > 0 && <p className="text-center text-sm on-bg">Pas tout à fait ! Essaie encore.</p>}
 
       <div className="flex justify-center gap-3">
         {found && (
@@ -85,17 +85,21 @@ export function FindGame({ challenges, isParent }: { challenges: FindChallengeWi
       {isParent && (
         <div className="self-center">
           {confirmDelete ? (
-            <div className="flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-2 text-sm bg-card border border-border rounded-full px-4 py-2 shadow-sm">
               <span>Supprimer ce défi ?</span>
               <button type="button" onClick={handleDelete} className="rounded-full bg-red-600 text-white text-xs px-3 py-1">
                 Oui
               </button>
-              <button type="button" onClick={() => setConfirmDelete(false)} className="rounded-full bg-card border border-border text-xs px-3 py-1">
+              <button type="button" onClick={() => setConfirmDelete(false)} className="rounded-full bg-background border border-border text-xs px-3 py-1">
                 Non
               </button>
             </div>
           ) : (
-            <button type="button" onClick={() => setConfirmDelete(true)} className="text-xs text-muted hover:text-red-700 transition-colors">
+            <button
+              type="button"
+              onClick={() => setConfirmDelete(true)}
+              className="text-xs text-muted hover:text-red-700 transition-colors bg-card/90 border border-border rounded-full px-3 py-1.5 shadow-sm"
+            >
               Supprimer ce défi
             </button>
           )}
