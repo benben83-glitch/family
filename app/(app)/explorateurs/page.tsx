@@ -59,24 +59,20 @@ export default async function ExplorersPage() {
         )}
       </section>
 
-      <section className="bg-card/90 backdrop-blur-sm border border-border rounded-2xl p-6 flex flex-wrap items-center justify-center gap-8 text-center shadow-sm">
-        <Stat value={unlockedCount} label="cartes débloquées" />
-        <Stat value={cards.length} label="cartes au total" />
-        <Stat value={trips.length} label={`voyage${trips.length > 1 ? "s" : ""} raconté${trips.length > 1 ? "s" : ""}`} />
+      <section className="flex flex-wrap justify-center gap-2.5">
+        <StatBadge value={unlockedCount} label="cartes débloquées" />
+        <StatBadge value={cards.length} label="cartes au total" />
+        <StatBadge value={trips.length} label={`voyage${trips.length > 1 ? "s" : ""} raconté${trips.length > 1 ? "s" : ""}`} />
       </section>
 
       {profile.role === "parent" && (
-        <section className="bg-card/90 backdrop-blur-sm border border-border rounded-2xl p-6 flex flex-col items-center gap-3 shadow-sm">
-          <p className="text-sm text-muted">Profils enfants</p>
-          {children.length > 0 && (
-            <div className="flex flex-wrap gap-3 justify-center">
-              {children.map((child) => (
-                <span key={child.id} className="text-sm bg-background border border-border rounded-full px-3 py-1">
-                  {child.avatar_emoji} {child.full_name}
-                </span>
-              ))}
-            </div>
-          )}
+        <section className="flex flex-wrap items-center justify-center gap-2">
+          <span className="text-white/95 text-sm font-medium [text-shadow:0_1px_6px_rgba(0,0,0,0.3)]">Profils enfants :</span>
+          {children.map((child) => (
+            <span key={child.id} className="text-sm bg-white/90 border border-border rounded-full px-3 py-1 shadow-sm">
+              {child.avatar_emoji} {child.full_name}
+            </span>
+          ))}
           <AddChildForm />
         </section>
       )}
@@ -84,11 +80,11 @@ export default async function ExplorersPage() {
   );
 }
 
-function Stat({ value, label }: { value: number; label: string }) {
+function StatBadge({ value, label }: { value: number; label: string }) {
   return (
-    <div>
-      <p className="font-display text-3xl text-primary">{value}</p>
-      <p className="text-sm text-muted">{label}</p>
-    </div>
+    <span className="flex items-center gap-1.5 rounded-full bg-gradient-to-b from-[#ffab4a] to-[#ff7a3d] text-white text-sm px-4 py-1.5 shadow-md">
+      <span className="font-display font-bold">{value}</span>
+      {label}
+    </span>
   );
 }
