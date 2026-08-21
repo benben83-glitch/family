@@ -11,7 +11,6 @@ export default function ExplorersLayout({ children }: LayoutProps<"/">) {
         className="object-cover -z-20"
         sizes="100vw"
       />
-      <div className="absolute inset-0 -z-10 bg-white/55" />
       <div className="relative max-w-5xl mx-auto px-5 py-8">{children}</div>
     </div>
   );
