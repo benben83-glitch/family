@@ -57,3 +57,33 @@ export async function listRecentMedia(limit: number): Promise<(Media & { tripTit
     return { ...media, signedUrl: urlByPath.get(media.storage_path) ?? null, tripTitle: trips.title, tripSlug: trips.slug };
   });
 }
+
+export type TripPhoto = { id: string; tripId: string; tripTitle: string; signedUrl: string };
+
+/** Toutes les photos (pas les vidéos) de tous les voyages, pour le picker de création de défi "Cherche et trouve". */
+export async function listAllTripPhotos(): Promise<TripPhoto[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("media")
+    .select("id, trip_id, storage_path, trips(title)")
+    .eq("type", "photo")
+    .order("created_at", { ascending: false });
+
+  if (!data || data.length === 0) return [];
+
+  const paths = data.map((item) => item.storage_path);
+  const { data: signedUrls } = await supabase.storage.from("trip-media").createSignedUrls(paths, SIGNED_URL_TTL_SECONDS);
+  const urlByPath = new Map(signedUrls?.map((entry) => [entry.path, entry.signedUrl]) ?? []);
+
+  return data
+    .map((item) => {
+      const trip = item.trips as unknown as { title: string } | null;
+      return {
+        id: item.id as string,
+        tripId: item.trip_id as string,
+        tripTitle: trip?.title ?? "",
+        signedUrl: urlByPath.get(item.storage_path as string) ?? null,
+      };
+    })
+    .filter((photo): photo is TripPhoto => Boolean(photo.signedUrl));
+}
