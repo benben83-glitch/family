@@ -32,6 +32,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
 }
 
 /*
@@ -55,14 +56,12 @@ body {
   --muted: #5b7099;
   --font-display: var(--font-baloo);
 
-  border-radius: 1.5rem;
-  padding: 1.5rem 1.25rem 2.5rem;
-  margin: -0.5rem -1.25rem 0;
-}
-
-@media (min-width: 640px) {
-  .explorers-theme {
-    padding: 2rem;
-    margin: -0.5rem 0 0;
-  }
+  /* Déborde du conteneur centré max-w-5xl du site pour couvrir toute la
+     largeur de l'écran, quelle que soit la profondeur d'imbrication. */
+  position: relative;
+  left: 50%;
+  right: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  margin-right: -50vw;
 }
