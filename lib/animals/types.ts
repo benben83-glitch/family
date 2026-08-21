@@ -30,11 +30,11 @@ export const DIET_OPTIONS: { value: Diet; label: string; icon: string }[] = [
 ];
 
 export const RARITY_OPTIONS: { value: Rarity; label: string; color: string }[] = [
-  { value: "commune", label: "Commune", color: "#8f9c85" },
-  { value: "rare", label: "Rare", color: "#4f80a3" },
-  { value: "tres_rare", label: "Très rare", color: "#7a5ba3" },
-  { value: "epique", label: "Épique", color: "#c1653b" },
-  { value: "legendaire", label: "Légendaire", color: "#b8912f" },
+  { value: "commune", label: "Commune", color: "#7fa8d9" },
+  { value: "rare", label: "Rare", color: "#2f6fed" },
+  { value: "tres_rare", label: "Très rare", color: "#8b5cf6" },
+  { value: "epique", label: "Épique", color: "#f2872e" },
+  { value: "legendaire", label: "Légendaire", color: "#f5b83d" },
 ];
 
 export function dietOption(diet: Diet) {

@@ -33,3 +33,37 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
+
+/*
+ * Univers Explorateurs (enfants) : palette bleu/blanc/rouge, plus colorée
+ * et ludique, distincte du style épuré/premium de l'espace adulte. Grâce à
+ * @theme inline, les classes Tailwind (bg-primary, text-accent...) lisent
+ * ces variables CSS à l'affichage : les surcharger ici suffit à re-thémer
+ * toute l'arborescence sans toucher aux composants. Voir
+ * app/(app)/explorateurs/layout.tsx.
+ */
+.explorers-theme {
+  --background: #eaf3ff;
+  --foreground: #1a2b4a;
+  --card: #ffffff;
+  --border: #cfe1f9;
+  --primary: #2f6fed;
+  --primary-foreground: #ffffff;
+  --accent: #e0433d;
+  --accent-foreground: #ffffff;
+  --gold: #f5b83d;
+  --muted: #5b7099;
+  --font-display: var(--font-baloo);
+
+  background: linear-gradient(180deg, #dcebff 0%, #eaf3ff 40%, #f5f9ff 100%);
+  border-radius: 1.5rem;
+  padding: 1.5rem 1.25rem 2.5rem;
+  margin: -0.5rem -1.25rem 0;
+}
+
+@media (min-width: 640px) {
+  .explorers-theme {
+    padding: 2rem;
+    margin: -0.5rem 0 0;
+  }
+}
